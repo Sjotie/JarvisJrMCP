@@ -2,6 +2,55 @@
 
 A Model Context Protocol server that implements various tools for task management, calendar operations, and web searching capabilities.
 
+## Prerequisites
+
+Before you begin, make sure you have:
+1. [Node.js](https://nodejs.org/) installed on your computer
+2. [Claude Desktop App](https://claude.ai/desktop) installed
+3. Basic familiarity with using the terminal/command prompt
+
+## Getting Started
+
+### Download the Project
+Choose one of these methods:
+
+1. Using Git:
+```bash
+git clone https://github.com/yourusername/JarvisJrMCP.git
+cd JarvisJrMCP
+```
+
+2. Download as ZIP:
+   - Go to the GitHub repository
+   - Click the green "Code" button
+   - Select "Download ZIP"
+   - Extract the ZIP file
+   - Open terminal/command prompt and navigate to the extracted folder
+
+### Setup
+
+1. Open your terminal/command prompt in the project directory
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Build the server:
+```bash
+npm run build
+```
+
+### Configure Claude Desktop
+
+1. Open Claude Desktop app
+2. Access settings either by:
+   - Clicking the settings icon in the top left, OR
+   - Using the keyboard shortcut: 
+     - Windows: Ctrl + ,
+     - Mac: Command + ,
+3. Go to "Developer Settings"
+4. Click "Edit Config File" - this will open your config file location
+
 ## Features
 
 ### Tools
