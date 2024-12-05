@@ -16,7 +16,7 @@ Choose one of these methods:
 
 1. Using Git:
 ```bash
-git clone https://github.com/yourusername/JarvisJrMCP.git
+git clone https://github.com/Sjotie/JarvisJrMCP.git
 cd JarvisJrMCP
 ```
 
