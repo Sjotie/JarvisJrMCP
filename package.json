@@ -1,0 +1,33 @@
+{
+  "name": "jarvis-jr",
+  "version": "0.1.0",
+  "description": "A Model Context Protocol server",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "jarvis-jr": "./build/index.js"
+  },
+  "files": [
+    "build"
+  ],
+  "scripts": {
+    "start": "node src/index.js",
+    "build": "node scripts/build.js",
+    "dev": "nodemon src/index.js",
+    "prepare": "npm run build",
+    "clean": "node scripts/clean.js",
+    "prebuild": "npm run clean",
+    "inspector": "mcp-inspector"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.6.0",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1",
+    "@modelcontextprotocol/inspector": "^0.2.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

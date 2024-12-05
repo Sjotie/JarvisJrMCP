@@ -1,0 +1,246 @@
+{
+  "local": {
+    "tools": {
+      "getCurrentTime": {
+        "description": "Get current time in various formats (ISO, local, Unix timestamp, UTC)",
+        "method": "GET",
+        "inputSchema": {
+          "type": "object",
+          "properties": {}
+        }
+      }
+    }
+  },
+  "webhooks": {
+    "assistant": {
+      "baseUrl": "${WEBHOOK_URL}",
+      "tools": {
+        "update_to_do": {
+          "description": "Update an existing to_do, not calendar events, with a new title, notes, status, and due date. To remove it you can also mark it as complete.",
+          "method": "POST",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "taskId": {
+                "type": "string",
+                "description": "The unique identifier of the to_do to be updated. This is always required and looks like a random, unique code. retrieve to_dos to get it. To_dos and calendars are not the same"
+              },
+              "taskTitle": {
+                "type": "string",
+                "description": "Updated title for the to_do. Leave empty if the title remains unchanged."
+              },
+              "taskNotes": {
+                "type": "string",
+                "description": "Optional updated notes for the to_do."
+              },
+              "taskStatus": {
+                "type": "string",
+                "description": "Whether it's completed. Must always be either 'Yes' or 'No'"
+              },
+              "dueDate": {
+                "type": "string",
+                "format": "date",
+                "description": "Updated due date for the to_do. Use the format YYYY-MM-DD HH:MM."
+              }
+            },
+            "required": ["taskId", "taskStatus"]
+          }
+        },
+        "store_note": {
+          "description": "Store a note. This is for information, not for tasks or events.",
+          "method": "POST",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "noteTitle": {
+                "type": "string",
+                "description": "Title of the note"
+              },
+              "noteContent": {
+                "type": "string",
+                "description": "Content of the note"
+              }
+            },
+            "required": ["noteTitle", "noteContent"]
+          }
+        },
+        "retrieve_to_do": {
+          "description": "Retrieve to_dos, not calendar events, due up to and including today. To include today's to_dos, set 'toDueDate' to 1:01 AM the next day. use this format {{now}}",
+          "method": "POST",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "toDueDate": {
+                "type": "string",
+                "format": "date",
+                "description": "Set this to tomorrow's date at 1:01 AM to include to_dos that are due today. Use the format {{now}}. Optional."
+              }
+            },
+            "required": ["toDueDate"]
+          }
+        },
+        "create_to_do": {
+          "description": "Create a new to_do, not calendar events, with a title, optional notes, and a due date.",
+          "method": "POST",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "taskTitle": {
+                "type": "string",
+                "description": "The title of the to_do."
+              },
+              "taskNotes": {
+                "type": "string",
+                "description": "Optional notes for the to_do."
+              },
+              "dueDate": {
+                "type": "string",
+                "format": "date",
+                "description": "The due date for the to_do. Use the format YYYY-MM-DD HH:MM, for example, '2023-12-22 01:01'."
+              }
+            },
+            "required": ["taskTitle", "dueDate"]
+          }
+        },
+        "search_calendar_events": {
+          "description": "Search for calendar events, not tasks, within a specified date range, containing certain text, and order the results. It processes events starting before the specified start date and overlapping with this date.",
+          "method": "POST",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "startDate": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The start date to search from. Events starting before this date and overlapping will be included. Optional. Format: YYYY-MM-DD HH:MM."
+              },
+              "endDate": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The end date to search up to. Optional. Format: YYYY-MM-DD HH:MM."
+              },
+              "query": {
+                "type": "string",
+                "description": "Search for events containing this specified text. Optional."
+              },
+              "orderBy": {
+                "type": "string",
+                "enum": ["startTime", "updatedTime"],
+                "description": "Order by 'startTime' for events to be ordered by start date/time, or 'Updated' to order by the last modification time. Optional."
+              },
+              "updatedFrom": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Only include events that have been updated after this date and time. Optional. Format: YYYY-MM-DD HH:MM."
+              }
+            },
+            "required": ["endDate"]
+          }
+        },
+        "search_the_web": {
+          "description": "Search the web using google or a webpage. Send search terms to find results on google, send a url that always starts with http to get text from a webpage. If you start with http it goes to a webpage. Without http, the message is treated as a search query and search results will be returned.",
+          "method": "POST",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "prompt": {
+                "type": "string",
+                "description": "The URL or search command"
+              }
+            },
+            "required": ["prompt"]
+          }
+        },
+        "create_calendar_event": {
+          "description": "Create a calendar event with specified details. Either an end date or a duration must be set, but not both. always at LEAST one",
+          "method": "POST",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "eventName": {
+                "type": "string",
+                "description": "The name of the event."
+              },
+              "isAllDay": {
+                "type": "boolean",
+                "description": "True if the event is an all-day event; false otherwise."
+              },
+              "startDate": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The start date and time of the event. Required if 'isAllDay' is false. Format: YYYY-MM-DD HH:MM."
+              },
+              "endDate": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The end date and time of the event. Optional, required if 'duration' is not set and 'isAllDay' is false. Format: YYYY-MM-DD HH:MM."
+              },
+              "duration": {
+                "type": "string",
+                "description": "The duration of the event. Optional, required if 'endDate' is not set. Format: Duration in ISO 8601 time format 'PTnHnMnS'."
+              },
+              "description": {
+                "type": "string",
+                "description": "A description of the event. Optional."
+              }
+            },
+            "required": ["eventName", "isAllDay"]
+          }
+        },
+        "update_calendar_event": {
+          "description": "Update details of an existing calendar event. Provide an 'eventId' along with the fields that need to be updated. If 'isAllDay' is true, 'startDate' should be a date without time.",
+          "method": "POST",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "eventId": {
+                "type": "string",
+                "description": "The unique identifier of the event to be updated."
+              },
+              "eventName": {
+                "type": "string",
+                "description": "The new name of the event. Optional."
+              },
+              "isAllDay": {
+                "type": "boolean",
+                "description": "Set to true if the event is an all-day event; false otherwise. Optional."
+              },
+              "startDate": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The new start date and time of the event. Optional if 'isAllDay' is false. Format: YYYY-MM-DD HH:MM."
+              },
+              "endDate": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The new end date and time of the event. Optional, and should not be provided if 'duration' is given. Format: YYYY-MM-DD HH:MM."
+              },
+              "duration": {
+                "type": "string",
+                "description": "The new duration of the event. Optional, and should not be provided if 'endDate' is given. Format: Duration in ISO 8601 time format 'PTnHnMnS'."
+              },
+              "description": {
+                "type": "string",
+                "description": "A new description of the event. Optional."
+              }
+            },
+            "required": ["eventId"]
+          }
+        },
+        "delete_calendar_event": {
+          "description": "Delete a specified calendar event. this doesnt work with tasks.",
+          "method": "POST",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "eventId": {
+                "type": "string",
+                "description": "The unique identifier of the event to be deleted."
+              }
+            },
+            "required": ["eventId"]
+          }
+        }
+      }
+    }
+  }
+}
